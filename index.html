@@ -29,10 +29,9 @@
 </head>
 <body>
     <div class="compass-container">
-        <img id="compass" src="https://play-lh.googleusercontent.com/oanPKGB6BXblrL-6ZssOY3pGBxPptt6srdVQaoHAoLTc4YxRdWlk66KQpvpPTRmSwbY" alt="Qibla Compass">
+        <img id="compass" src="image.png" alt="Qibla Compass">
     </div>
     <script>
-        // Constants
         const KAABA_LATITUDE = 21.4225;
         const KAABA_LONGITUDE = 39.8262;
 
@@ -56,7 +55,7 @@
 
         // Function to handle device orientation
         function handleOrientation(event, bearingToQibla) {
-            let alpha = event.alpha;
+            let alpha = event.alpha; // Rotation around the z-axis
             let compass = document.getElementById('compass');
             let rotation = alpha - bearingToQibla;
             compass.style.transform = 'rotate(' + rotation + 'deg)';
