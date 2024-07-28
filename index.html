@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qibla Compass</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .compass-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        #compass {
+            width: 100%;
+            height: 100%;
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<body>
+    <div class="compass-container">
+        <img id="compass" src="https://play-lh.googleusercontent.com/oanPKGB6BXblrL-6ZssOY3pGBxPptt6srdVQaoHAoLTc4YxRdWlk66KQpvpPTRmSwbY" alt="Qibla Compass">
+    </div>
+    <script>
+        // Constants
+        const KAABA_LATITUDE = 21.4225;
+        const KAABA_LONGITUDE = 39.8262;
+
+        // Function to calculate the bearing between two points
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const toRadians = degrees => degrees * (Math.PI / 180);
+            const toDegrees = radians => radians * (180 / Math.PI);
+
+            let dLon = toRadians(lon2 - lon1);
+            lat1 = toRadians(lat1);
+            lat2 = toRadians(lat2);
+
+            let y = Math.sin(dLon) * Math.cos(lat2);
+            let x = Math.cos(lat1) * Math.sin(lat2) -
+                    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+            let brng = Math.atan2(y, x);
+            brng = toDegrees(brng);
+            return (brng + 360) % 360;
+        }
+
+        // Function to handle device orientation
+        function handleOrientation(event, bearingToQibla) {
+            let alpha = event.alpha;
+            let compass = document.getElementById('compass');
+            let rotation = alpha - bearingToQibla;
+            compass.style.transform = 'rotate(' + rotation + 'deg)';
+        }
+
+        // Get the user's location
+        navigator.geolocation.getCurrentPosition(function(position) {
+            let userLat = position.coords.latitude;
+            let userLon = position.coords.longitude;
+            let bearingToQibla = calculateBearing(userLat, userLon, KAABA_LATITUDE, KAABA_LONGITUDE);
+
+            // Add event listener for device orientation
+            window.addEventListener('deviceorientation', function(event) {
+                handleOrientation(event, bearingToQibla);
+            });
+        }, function(error) {
+            alert('Error getting location: ' + error.message);
+        });
+    </script>
+</body>
+</html>
